@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Seat Is Secured | Sales Growth Academy</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body class="success-page">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand">SALES GROWTH ACADEMY</span>
+    <span class="brand-sub">Montessori &amp; Learning Resources Masterclass</span>
+  </div>
+</header>
+
+<main>
+<section class="success-section">
+  <div class="container">
+    <div id="loading" class="state">
+      <div class="spinner"></div>
+      <p>Verifying your payment&hellip;</p>
+    </div>
+    <div id="success" class="state hidden">
+      <div class="badge">&#127881;</div>
+      <h1>YOUR SEAT HAS BEEN SECURED!</h1>
+      <p class="lead">Congratulations!</p>
+      <p>Your registration for the Sales Growth Academy Montessori &amp; Learning Resources Masterclass is confirmed.</p>
+      <p>You are officially registered for the <strong>December 2026</strong> masterclass.</p>
+      <div class="next-box">
+        <h2>NEXT STEP:</h2>
+        <p>Join the official Telegram student community.</p>
+        <a id="tgBtn" href="#" class="cta">GET MY TELEGRAM ACCESS</a>
+      </div>
+      <div class="meta-grid">
+        <div><span>CLASS START DATE</span><strong>28 December 2026, 8:00 PM WAT</strong></div>
+        <div><span>YOUR ACCESS</span><strong>12 MONTHS</strong></div>
+      </div>
+    </div>
+    <div id="failed" class="state hidden">
+      <div class="badge warn">&#9888;&#65039;</div>
+      <h1>PAYMENT NOT VERIFIED</h1>
+      <p id="failMsg">We could not verify your payment yet.</p>
+      <p>Please try again in a few minutes, or contact support if the problem continues.</p>
+      <a href="https://wa.me/2347068795736" class="cta">CONTACT SUPPORT</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p class="footer-brand">SALES GROWTH ACADEMY</p>
+    <p class="footer-copy">&copy; 2026 Sales Growth Academy. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const ref = (params.get("reference") || params.get("trxref") || "").trim();
+  const loadingEl = document.getElementById("loading");
+  const successEl = document.getElementById("success");
+  const failedEl = document.getElementById("failed");
+  const failMsgEl = document.getElementById("failMsg");
+  const tgBtn = document.getElementById("tgBtn");
+  function show(el) {
+    [loadingEl, successEl, failedEl].forEach(e => e.classList.add("hidden"));
+    el.classList.remove("hidden");
+  }
+  if (!ref) {
+    failMsgEl.textContent = "No payment reference was provided in the URL.";
+    show(failedEl);
+  } else {
+    fetch(`/api/verify/${encodeURIComponent(ref)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.verified) {
+          tgBtn.href = `https://t.me/Salesgrowthacademyaccessbot?start=${encodeURIComponent(ref)}`;
+          show(successEl);
+        } else {
+          failMsgEl.textContent = data.message || "We could not verify this payment.";
+          show(failedEl);
+        }
+      })
+      .catch(() => {
+        failMsgEl.textContent = "We could not reach the verification service. Please try again.";
+        show(failedEl);
+      });
+  }
+</script>
+
+</body>
+</html>
